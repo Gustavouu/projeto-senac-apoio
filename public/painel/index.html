@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Apoio no celular</title>
+<title>Painel do Apoio | Projeto Senac</title>
 <style>
 :root {
   --paper:#FAF2EA;
@@ -29,254 +29,241 @@
 * { box-sizing: border-box; }
 body { margin: 0; }
 main { max-width: 455px; margin: auto; padding: 24px 20px; }
-h1,h2,h3,p { margin: 0; }
+.back { display: inline-block; margin-bottom: 16px; color: var(--accent); font-weight: 700; }
+h1,h2,p { margin: 0; }
 h1 { font-size: 33px; letter-spacing: -.05em; }
-h2 { line-height: 1.15; font-size: 24px; letter-spacing: -.035em; }
-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+h2 { font-size: 22px; line-height: 1.15; letter-spacing: -.025em; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 output {
   --status-icon: var(--offlineIcon);
   display: inline-flex; align-items: center; gap: 6px; background: var(--offlineFill);
-  border-radius: 999px; padding: 5px 10px; font-size: 13px; font-weight: 700; white-space: nowrap;
+  border-radius: 999px; padding: 5px 10px; font-size: 13px; font-weight: 700;
 }
 output::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--status-icon); }
 output.ready { --status-icon: var(--connectedIcon); background: var(--connectedFill); }
-output.pending::before {
-  width: 10px; height: 10px; background: transparent; border: 2px solid var(--progressTrack);
-  border-top-color: var(--progressIcon); animation: rotate 900ms steps(4) infinite;
+section { margin-top: 16px; }
+.card { background: var(--progressFill); border-radius: 12px; padding: 16px; }
+.hint { margin-top: 6px; font-size: 14px; color: var(--muted); }
+button {
+  min-height: 44px; margin-top: 10px; padding: 9px 13px; border: 0; border-radius: 10px;
+  color: var(--onPrimary); background: linear-gradient(var(--primaryTop), var(--primaryBottom));
+  font: inherit; font-weight: 700; cursor: pointer;
 }
-@keyframes rotate { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { output.pending::before { animation: none; } }
-section, details { margin-top: 16px; }
-article, #waiting, details { background: var(--progressFill); border-radius: 12px; padding: 16px; }
-article .request-context { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin: 10px 0 16px; }
-.request-context h3 { font-size: 16px; }
-.request-context > * { max-width: 100%; overflow-wrap: anywhere; }
-.location-group { margin-top: 16px; }
-.location-group h3 { font-size: 14px; }
-small, .hint { font-size: 14px; color: var(--muted); }
-.hint { margin: 6px 0 0; }
-label { display: block; font-size: 14px; font-weight: 680; margin: 10px 0 4px; }
-a.action,button,input,textarea { font: inherit; }
-button, a.action { display: inline-block; min-height: 44px; padding: 9px 13px; border: 0; border-radius: 10px; color: var(--onPrimary);
-  background: linear-gradient(var(--primaryTop), var(--primaryBottom)); cursor: pointer; text-decoration: none; font-weight: 700; }
 button.secondary { color: var(--ink); background: var(--back); }
-button:disabled, a[aria-disabled="true"] { opacity: .56; cursor: default; }
-input,textarea { width: 100%; border: 1px solid var(--progressTrack); border-radius: 8px; padding: 9px 10px; color: var(--ink); background: #fffaf6; }
-textarea { resize: vertical; }
-.connection-info button, .location-group button { margin-top: 8px; }
-.actions { margin-top: 16px; }
-.actions .action { display: block; text-align: center; }
-summary { cursor: pointer; font-weight: 720; min-height: 28px; }
-summary small { margin-left: 8px; overflow-wrap: anywhere; }
+button:disabled { opacity: .56; cursor: default; }
 :focus-visible { outline: 3px solid var(--progressIcon); outline-offset: 2px; }
 [hidden] { display: none !important; }
-.site-back { display:inline-block; margin-bottom:14px; color:var(--muted); font-size:.92rem; font-weight:650; text-underline-offset:.2em; }
 </style>
 </head>
 <body>
 <main>
-  <a class="site-back" href="/">Voltar ao projeto</a>
+  <a class="back" href="/">← Projeto Senac</a>
   <header><h1>Apoio</h1><output id="connection" aria-live="polite">Sem conexão</output></header>
-  <section class="connection-info" aria-label="Conexão com o aparelho">
-    <p class="hint" id="help">Conecte o painel ao aparelho para receber pedidos.</p>
-    <button id="ble" type="button" class="secondary">Conectar por Bluetooth</button>
+  <section aria-label="Conexão com o aparelho">
+    <p class="hint" id="help">Conecte o painel ao aparelho.</p>
+    <button id="ble" type="button">Conectar por Bluetooth</button>
   </section>
-  <section id="waiting" hidden role="status">
-    <h2>Aguardando um pedido</h2>
-    <p class="hint">O rascunho aparece aqui quando é encaminhado pelo aparelho.</p>
+  <section id="activity" class="card" hidden role="status">
+    <h2 id="activity-title">Aguardando um pedido</h2>
+    <p class="hint" id="activity-detail">O envio começa quando você confirma na tela do Apoio.</p>
   </section>
-  <section id="inbox" hidden>
-    <article>
-      <h2 id="inbox-title">Revise a mensagem</h2>
-      <div class="request-context" aria-live="polite">
-        <h3 id="scenario"></h3><span class="hint" id="recipient"></span>
-      </div>
-      <label for="message">Texto da mensagem</label>
-      <textarea id="message" rows="5" maxlength="1000"></textarea>
-      <div class="location-group">
-        <h3>Localização</h3>
-        <p class="hint" id="location" role="status"></p>
-        <button id="locate" type="button" class="secondary">Incluir localização atual</button>
-      </div>
-      <div class="actions">
-        <a id="share" class="action" target="_blank" rel="noopener noreferrer">Abrir no WhatsApp</a>
-        <p class="hint" id="share-hint">Confirme o envio no WhatsApp.</p>
-      </div>
-    </article>
+  <section id="location" class="card" hidden aria-labelledby="location-title">
+    <h2 id="location-title">Localização do celular</h2>
+    <p class="hint" id="location-note" role="status">Permita o acesso para anexar a posição aos pedidos que confirmar.</p>
+    <button id="locate" type="button" class="secondary" aria-pressed="false">Incluir localização</button>
   </section>
-  <details id="setup">
-    <summary>Contato de apoio <small id="saved-name"></small></summary>
-    <form id="contact">
-      <label for="name">Nome</label>
-      <input id="name" type="text" maxlength="60" autocomplete="off">
-      <label for="number">WhatsApp com DDD</label>
-      <input id="number" type="tel" autocomplete="off" inputmode="tel" placeholder="DDD e número" maxlength="24">
-      <div class="actions"><button>Salvar contato</button></div>
-      <p class="hint" id="saved" role="status"></p>
-    </form>
-  </details>
 </main>
 <script>
 "use strict";
 const scenarios = [{"key":"ansiedade","title":"Ansiedade ou pânico","text":"Estou com muita ansiedade e preciso de apoio. Você pode falar comigo agora?"},{"key":"roubo","title":"Celular roubado","text":"Meu celular foi roubado. Preciso de ajuda. Pode avisar alguém de confiança e me ajudar a chegar a um lugar seguro?"},{"key":"risco","title":"Estou em risco","text":"Não me sinto em segurança. Preciso de ajuda agora. Pode avisar alguém de confiança?"},{"key":"conversa","title":"Preciso conversar","text":"Preciso conversar com alguém. Você pode me mandar uma mensagem quando puder?"},{"key":"urgente","title":"Mensagem pronta","text":"Preciso de ajuda agora. Pode tentar falar comigo ou avisar alguém de confiança?"}];
-const format = {"opening":"Pedido de apoio","phoneLocation":"Minha localização atual pelo celular","deviceLocation":"Minha localização atual pelo GPS do aparelho","missingLocation":"Localização indisponível."};
 const $ = id => document.getElementById(id);
 const service = "24ee4220-5c42-4c90-a322-ec12904c6761";
-const statusUuid = "24ee4221-5c42-4c90-a322-ec12904c6761";
-const commandUuid = "24ee4222-5c42-4c90-a322-ec12904c6761";
+const statusUuid = "24ee4223-5c42-4c90-a322-ec12904c6761";
+const commandUuid = "24ee4224-5c42-4c90-a322-ec12904c6761";
+const gpsUuid = "24ee4225-5c42-4c90-a322-ec12904c6761";
 const wifi = location.hostname === "192.168.4.1";
-const canLocate = isSecureContext && Boolean(navigator.geolocation);
-let contact = readContact();
-let packetId = 0;
-let recipient = null;
-let coordinates = null;
-let acknowledged = 0;
-let acking = 0;
-let bleTimer;
+const relay = wifi ? "https://apoio-senac.vercel.app/api/envio" : "/api/envio";
+const canLocate = isSecureContext && Boolean(navigator.geolocation && navigator.permissions);
+const locationPreference = "sos.location.v1";
+let locationEnabled = false;
+try { locationEnabled = localStorage.getItem(locationPreference) === "yes"; } catch {}
+let providerReady = false, nextHealthCheck = 0;
+let bleTimer, bleDevice, commands, status, gps, previous;
 let busy = false;
-let bleDevice, commands, status;
-let ready = false;
 
-function readContact() {
-  try {
-    const raw = localStorage.getItem("sos.trusted.v1");
-    if (!raw) return null;
-    const record = raw.startsWith("{") ? JSON.parse(raw) : {name: "Meu contato", number: raw};
-    const number = normalizePhone(record.number || "");
-    return number && record.name ? {name: record.name, number} : null;
-  } catch { return null; }
-}
-function normalizePhone(input) {
-  const digits = input.replace(/[\s()+.-]/g, "");
-  if (/^\d{10,11}$/.test(digits)) return "55" + digits;
-  return /^\d{12,15}$/.test(digits) ? digits : "";
-}
-function setConnection(text, instruction, connected) {
+function connection(text, detail, ready = false) {
   if ($("connection").textContent !== text) $("connection").textContent = text;
-  if ($("help").textContent !== instruction) $("help").textContent = instruction;
-  $("connection").classList.toggle("ready", connected && Boolean(contact));
-  $("connection").classList.toggle("pending", text === "Conectando");
-  $("waiting").hidden = !connected || !contact || Boolean(packetId);
-  ready = connected;
+  if ($("help").textContent !== detail) $("help").textContent = detail;
+  $("connection").classList.toggle("ready", ready);
 }
-function panelConnected(channel) {
-  const instruction = contact ? "Via " + channel + ". Mantenha o painel aberto para receber pedidos." :
-    "Cadastre o contato que vai receber as mensagens.";
-  setConnection(contact ? "Conectado" : "Falta o contato", instruction, true);
+function activity(title, detail) {
+  $("activity").hidden = false;
+  $("activity-title").textContent = title;
+  $("activity-detail").textContent = detail;
 }
-function updateContact() {
-  $("name").value = contact?.name || "";
-  $("number").value = contact?.number || "";
-  $("saved-name").textContent = contact?.name || "";
-}
-updateContact();
-$("setup").open = !contact;
-$("contact").addEventListener("submit", event => {
-  event.preventDefault();
-  const name = $("name").value.trim();
-  const number = normalizePhone($("number").value);
-  if (!name || !number) { $("saved").textContent = "Preencha o nome e o número com DDD."; return; }
-  contact = {name, number};
-  try { localStorage.setItem("sos.trusted.v1", JSON.stringify(contact)); } catch {}
-  updateContact();
-  $("saved").textContent = "Contato salvo.";
-  $("setup").open = false;
-  sync();
-});
-function mapsLink() {
-  if (!coordinates || Date.now() - coordinates.time > 60000) return "";
-  return "https://maps.google.com/?q=" + coordinates.lat.toFixed(6) + "," + coordinates.lon.toFixed(6);
-}
-function updateMessage() {
-  const link = mapsLink();
-  const draft = $("message").value.trim();
-  const location = link ? format.phoneLocation + "\n" + link : format.missingLocation;
-  const text = [format.opening, draft, location].join("\n\n");
-  if (recipient && draft) $("share").href = "https://wa.me/" + recipient.number + "?text=" + encodeURIComponent(text);
-  else $("share").removeAttribute("href");
-  $("share").setAttribute("aria-disabled", String(!draft));
-  $("share-hint").textContent = draft ? "Confirme o envio no WhatsApp." : "Escreva uma mensagem para continuar.";
-  if (!$("locate").disabled) {
-    const note = link ? "Localização atual incluída · precisão de cerca de " + Math.round(coordinates.accuracy) + " m" :
-      canLocate ? "Inclua a posição atual do celular, se quiser." : "A captura da posição do celular está disponível no painel HTTPS.";
-    if ($("location").textContent !== note) $("location").textContent = note;
+function connected(channel, configured) {
+  if (!configured) {
+    connection("Configuração pendente", "A versão do Apoio precisa da chave de envio deste projeto.");
+    return;
   }
+  if (!providerReady) {
+    connection("Envio indisponível", channel + " conectado. Confira a internet e a configuração do WhatsApp.");
+    return;
+  }
+  connection("Conectado", "Via " + channel + ". Mantenha este painel aberto.", true);
+  if ($("activity").hidden) activity("Aguardando um pedido", "O envio começa quando você confirma na tela do Apoio.");
 }
-$("message").addEventListener("input", updateMessage);
-$("share").addEventListener("click", updateMessage);
-$("locate").hidden = !canLocate;
-$("locate").addEventListener("click", () => {
-  const id = packetId;
-  $("locate").disabled = true;
-  $("location").textContent = "Buscando a localização atual do celular…";
-  const finish = result => {
-    $("locate").disabled = false;
-    if (id !== packetId) return;
-    coordinates = result;
-    updateMessage();
-    if (!result) $("location").textContent = "Localização indisponível. Você pode enviar a mensagem.";
-  };
-  navigator.geolocation.getCurrentPosition(position => {
-    const {latitude, longitude, accuracy} = position.coords;
-    if (Number.isFinite(latitude) && Number.isFinite(longitude) && Number.isFinite(accuracy) &&
-        Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180 && Date.now() - position.timestamp <= 15000) {
-      finish({lat: latitude, lon: longitude, time: position.timestamp, accuracy});
-    } else finish(null);
-  }, () => finish(null), {enableHighAccuracy:true, maximumAge:0, timeout:7000});
-});
+async function checkProvider() {
+  if (Date.now() < nextHealthCheck) return;
+  try {
+    const response = await fetch(relay, {cache: "no-store", signal: AbortSignal.timeout(2600)});
+    providerReady = response.ok && (await response.json()).ready === true;
+  } catch { providerReady = false; }
+  nextHealthCheck = Date.now() + 9000;
+}
 
-async function receive(id, kind, acknowledge) {
-  if (!id || !scenarios[kind - 1] || kind === 2 || !contact || document.visibilityState !== "visible") return;
-  if (id !== packetId) {
-    packetId = id;
-    coordinates = null;
-    recipient = {...contact};
-    $("scenario").textContent = scenarios[kind - 1].title;
-    $("recipient").textContent = "Para " + recipient.name;
-    $("message").value = scenarios[kind - 1].text;
-    $("waiting").hidden = true;
-    $("inbox").hidden = false;
-    updateMessage();
-  }
-  if (id === acknowledged || id === acking) return;
-  acking = id;
-  try { await acknowledge(id); acknowledged = id; }
-  catch {}
-  finally { if (acking === id) acking = 0; }
+function updateLocation() {
+  $("locate").setAttribute("aria-pressed", String(locationEnabled));
+  $("locate").textContent = locationEnabled ? "Desativar localização" : "Incluir localização";
+  $("location-note").textContent = locationEnabled ? "A posição é consultada na hora do pedido." :
+    "Permita o acesso para anexar a posição aos pedidos que confirmar.";
 }
-async function pollWifi() {
-  const response = await fetch("/api/state?ready=" + Number(Boolean(contact)), {cache:"no-store",signal:AbortSignal.timeout(2400)});
-  if (!response.ok) throw new Error("Wi-Fi indisponível");
-  const packet = await response.json();
-  panelConnected("Wi-Fi");
-  await receive(packet.id, packet.kind, async id => {
-    const ack = await fetch("/api/received?id=" + id, {method:"POST",signal:AbortSignal.timeout(2400)});
-    if (!ack.ok) throw new Error("Pedido expirado");
+function currentPosition() {
+  return new Promise(resolve => {
+    const timer = setTimeout(() => resolve(null), 2700);
+    const finish = result => { clearTimeout(timer); resolve(result); };
+    navigator.geolocation.getCurrentPosition(({coords, timestamp}) => {
+      const {latitude, longitude} = coords;
+      const fresh = Date.now() - timestamp <= 15000;
+      finish(fresh && Number.isFinite(latitude) && Number.isFinite(longitude) ? {latitude, longitude} : null);
+    }, () => finish(null), {maximumAge: 0, timeout: 2500, enableHighAccuracy: true});
   });
 }
-function bleIncoming(value) {
-  if (!value || value.byteLength !== 5) return;
-  return receive(value.getUint32(0, true), value.getUint8(4), id => {
-    const buffer = new DataView(new ArrayBuffer(5));
-    buffer.setUint8(0, 1);
-    buffer.setUint32(1, id, true);
-    return commands.writeValueWithResponse(buffer.buffer);
+async function locateForRequest() {
+  if (!canLocate || !locationEnabled) return null;
+  try {
+    const permission = await navigator.permissions.query({name: "geolocation"});
+    if (permission.state === "granted") return await currentPosition();
+  } catch {}
+  return null;
+}
+$("location").hidden = !canLocate;
+updateLocation();
+$("locate").addEventListener("click", async () => {
+  $("locate").disabled = true;
+  try {
+    if (locationEnabled) locationEnabled = false;
+    else {
+      // Request permission in setup, never during a help request.
+      await new Promise(resolve => navigator.geolocation.getCurrentPosition(resolve, resolve, {timeout: 3500}));
+      locationEnabled = (await navigator.permissions.query({name: "geolocation"})).state === "granted";
+    }
+    try { localStorage.setItem(locationPreference, locationEnabled ? "yes" : "no"); } catch {}
+    updateLocation();
+  } catch {
+    $("location-note").textContent = "O navegador não liberou a localização.";
+  } finally {
+    $("locate").disabled = false;
+  }
+});
+
+function hex(bytes) {
+  return Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
+}
+function setOutcome(result, title) {
+  if (result.outcome === 16 || result.outcome === 19) {
+    activity("Pedido enviado", title + ". O WhatsApp aceitou o envio.");
+  } else if (result.outcome === 17) {
+    activity("Pedido não enviado", "O WhatsApp recusou o envio.");
+  } else activity("Envio sem confirmação", "Consulte o status na tela do Apoio.");
+}
+function signedResult(result) {
+  return result && [16, 17, 18, 19].includes(result.outcome) &&
+    typeof result.receipt === "string" && /^[0-9a-f]{30}$/.test(result.receipt);
+}
+async function dispatch(body) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch(relay, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body,
+        signal: AbortSignal.timeout(attempt ? 4200 : 12300),
+      });
+      if (!response.ok) break;
+      const result = await response.json();
+      if (signedResult(result)) return result;
+      if (result.status !== "pending") break;
+    } catch {}
+    if (!attempt) await new Promise(resolve => setTimeout(resolve, 700));
+  }
+  return {outcome: 18, receipt: ""};
+}
+async function receive(packet, report) {
+  const {id, kind, proof, gps: position} = packet;
+  if (!id || !scenarios[kind - 1] || kind === 2 || !/^[0-9a-f]{32}$/.test(proof) ||
+      document.visibilityState !== "visible") return;
+  const title = scenarios[kind - 1].title;
+  if (!previous || previous.proof !== proof) {
+    previous = {proof, result: null, reported: false};
+  }
+  if (previous.result?.outcome === 18 && previous.reported) previous.result = null;
+  if (!previous.result) {
+    activity("Enviando pedido", title);
+    const phonePosition = await locateForRequest();
+    previous.result = await dispatch(JSON.stringify({id, kind, proof, gps: position, phonePosition}));
+  }
+  setOutcome(previous.result, title);
+  await report(id, previous.result);
+  previous.reported = true;
+}
+async function pollWifi() {
+  const response = await fetch("/api/state?ready=" + Number(providerReady), {
+    cache: "no-store", signal: AbortSignal.timeout(2400),
+  });
+  if (!response.ok) throw new Error("Wi-Fi indisponível");
+  const packet = await response.json();
+  connected("Wi-Fi", packet.id || packet.configured);
+  await receive(packet, async (id, {outcome, receipt}) => {
+    const ack = await fetch("/api/result?id=" + id + "&outcome=" + outcome + "&receipt=" + receipt, {
+      method: "POST", signal: AbortSignal.timeout(2400),
+    });
+    if (!ack.ok) throw new Error("A CYD não recebeu o resultado");
   });
 }
 async function pollBluetooth() {
-  if (!bleDevice?.gatt.connected || !commands) return;
-  await commands.writeValueWithResponse(Uint8Array.of(0, Number(Boolean(contact))));
-  panelConnected("Bluetooth");
-  await bleIncoming(await status.readValue());
+  const command = commands;
+  await command.writeValueWithResponse(Uint8Array.of(0, Number(providerReady)));
+  const data = await status.readValue();
+  if (data.byteLength !== 21) throw new Error("Firmware incompatível");
+  const id = data.getUint32(0, true);
+  connected("Bluetooth", id || data.getUint8(4) === 1);
+  if (!id) return;
+  const proof = hex(new Uint8Array(data.buffer, data.byteOffset + 5, 16));
+  const position = await gps.readValue();
+  const reading = position.byteLength === 12 && position.getUint32(0, true) === id ? {
+    latitude: position.getInt32(4, true) / 1000000,
+    longitude: position.getInt32(8, true) / 1000000,
+  } : null;
+  await receive({id, kind: data.getUint8(4), proof, gps: reading}, async (receivedId, {outcome, receipt}) => {
+    const tag = receipt.match(/../g) || [];
+    const data = new DataView(new ArrayBuffer(5 + tag.length));
+    data.setUint8(0, outcome);
+    data.setUint32(1, receivedId, true);
+    tag.forEach((byte, index) => data.setUint8(5 + index, parseInt(byte, 16)));
+    await command.writeValueWithResponse(data.buffer);
+  });
 }
 async function sync() {
-  if (busy || document.visibilityState !== "visible") return;
+  if (busy || (!wifi && !commands) || document.visibilityState !== "visible") return;
   busy = true;
   try {
+    await checkProvider();
+    if (document.visibilityState !== "visible") return;
     if (wifi) await pollWifi();
-    else await pollBluetooth();
+    else if (commands) await pollBluetooth();
   } catch {
-    setConnection("Sem conexão", "Confira a conexão com o aparelho.", false);
+    connection("Sem conexão", "Confira a conexão com o aparelho.");
   } finally { busy = false; }
 }
 if (wifi) {
@@ -288,31 +275,36 @@ if (wifi) {
   $("ble").addEventListener("click", async () => {
     if (bleDevice?.gatt.connected) { bleDevice.gatt.disconnect(); return; }
     $("ble").disabled = true;
-    setConnection("Conectando", "Selecione Projeto Senac para conectar o painel.", false);
+    connection("Conectando", "Selecione Projeto Senac na lista.");
+    let incompatible = false;
     try {
-      bleDevice = await navigator.bluetooth.requestDevice({filters:[{services:[service]}]});
+      bleDevice = await navigator.bluetooth.requestDevice({filters: [{services: [service]}]});
       bleDevice.addEventListener("gattserverdisconnected", () => {
         clearInterval(bleTimer);
-        commands = status = null;
+        commands = status = gps = null;
         $("ble").textContent = "Conectar por Bluetooth";
-        setConnection("Sem conexão", "Reconecte para receber novos pedidos.", false);
-      }, {once:true});
+        if (!incompatible) connection("Sem conexão", "Reconecte para receber novos pedidos.");
+      }, {once: true});
       const gatt = await bleDevice.gatt.connect();
       const profile = await gatt.getPrimaryService(service);
-      commands = await profile.getCharacteristic(commandUuid);
-      status = await profile.getCharacteristic(statusUuid);
+      try {
+        status = await profile.getCharacteristic(statusUuid);
+        gps = await profile.getCharacteristic(gpsUuid);
+        commands = await profile.getCharacteristic(commandUuid);
+      } catch { incompatible = true; throw new Error("Firmware incompatível"); }
+      nextHealthCheck = 0;
       await sync();
-      if (!ready) throw new Error("Painel indisponível");
       $("ble").textContent = "Desconectar Bluetooth";
       bleTimer = setInterval(sync, 950);
     } catch {
       if (bleDevice?.gatt.connected) bleDevice.gatt.disconnect();
-      setConnection("Sem conexão", "Confira o Bluetooth e tente novamente.", false);
+      connection(incompatible ? "Atualize a CYD" : "Sem conexão", incompatible ?
+        "Grave a versão do Apoio com envio automático no aparelho." : "Confira o Bluetooth e tente novamente.");
     } finally { $("ble").disabled = false; }
   });
 } else {
-  $("ble").disabled = true;
-  $("help").textContent = "Para usar por Wi-Fi, conecte à rede Apoio e abra http://192.168.4.1.";
+  $("ble").hidden = true;
+  $("help").textContent = "Use o Chrome com Bluetooth ou conecte à rede Apoio e abra http://192.168.4.1.";
 }
 document.addEventListener("visibilitychange", sync);
 </script>

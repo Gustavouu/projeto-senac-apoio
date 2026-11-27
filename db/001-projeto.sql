@@ -12,7 +12,7 @@ VALUES (
     '[
         {"id":"tela","titulo":"Tela e toque","detalhe":"A tela de ajuda e a revisão da mensagem já foram abertas na placa.","estado":"Verificado"},
         {"id":"bluetooth","titulo":"Conexão Bluetooth","detalhe":"O Chrome reconheceu a CYD como Projeto Senac e leu o serviço Bluetooth.","estado":"Verificado"},
-        {"id":"envio","titulo":"Recebimento da mensagem","detalhe":"O painel prepara o rascunho. Falta confirmar o recebimento com um contato de teste.","estado":"Em teste"},
+        {"id":"envio","titulo":"Envio automático","detalhe":"O pedido é confirmado na CYD. Para ativar o envio real, falta configurar a conta do WhatsApp Business.","estado":"Em configuração"},
         {"id":"gps","titulo":"GPS na placa","detalhe":"O receptor NEO-6M está previsto para obter a localização no próprio aparelho.","estado":"Em integração"}
     ]'::jsonb
 )

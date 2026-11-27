@@ -26,7 +26,7 @@
       <div class="hero-copy">
         <h1 id="titulo">Apoio<span>.</span></h1>
         <p class="hero-lede">Um dispositivo de bolso para pedir ajuda.</p>
-        <p>A pessoa revisa o pedido na tela da CYD e recebe um rascunho no celular para falar com seu contato de apoio.</p>
+        <p>Escolha a situação e confirme na tela do Apoio. Com o envio configurado, a mensagem segue pelo WhatsApp para seu contato de apoio.</p>
         <div class="hero-actions">
           <a class="button" href="/painel/">Abrir painel</a>
           <a class="text-link" href="#prototipo">Ver o protótipo</a>
@@ -46,7 +46,7 @@
         </figure>
         <div class="device-copy">
           <h2 id="titulo-prototipo">O protótipo</h2>
-          <p>O primeiro toque acorda o mascote. O toque seguinte abre a tela de ajuda, onde a pessoa pode revisar a mensagem antes de encaminhá-la ao celular.</p>
+          <p>O primeiro toque acorda o mascote. O toque seguinte abre a tela de ajuda, onde a pessoa revisa a mensagem e confirma o envio.</p>
           <dl class="device-facts">
             <div><dt>Placa</dt><dd data-project="placa">ESP32-2432S028R</dd></div>
             <div><dt>Nome no Bluetooth</dt><dd data-project="bluetooth">Projeto Senac</dd></div>
@@ -64,9 +64,10 @@
       <ol class="connection-steps">
         <li><strong>Abra o painel</strong><p>Entre no painel pelo mesmo site.</p></li>
         <li><strong>Escolha Projeto Senac</strong><p>Toque em <b>Conectar por Bluetooth</b>. O navegador lista o aparelho que está por perto.</p></li>
-        <li><strong>Salve seu contato</strong><p>Deixe o painel aberto. Ao receber o rascunho, revise e confirme o envio no WhatsApp.</p></li>
+        <li><strong>Deixe o painel aberto</strong><p>Quando aparecer Conectado, confirme os pedidos na tela do Apoio.</p></li>
       </ol>
       <a class="button" href="/painel/">Abrir painel</a>
+      <p>Por Wi-Fi, entre na rede Apoio e abra 192.168.4.1 no navegador. O celular também precisa de acesso à internet.</p>
     </section>
 
     <section class="status-section" aria-labelledby="titulo-status">
@@ -75,7 +76,7 @@
         <ul class="status-list">
           <li data-stage="tela"><div><h3>Tela e toque</h3><p>A tela de ajuda e a revisão da mensagem já foram abertas na placa.</p></div><span>Verificado</span></li>
           <li data-stage="bluetooth"><div><h3>Conexão Bluetooth</h3><p>O Chrome reconheceu a CYD como Projeto Senac e leu o serviço Bluetooth.</p></div><span>Verificado</span></li>
-          <li data-stage="envio"><div><h3>Recebimento da mensagem</h3><p>O painel prepara o rascunho. Falta confirmar o recebimento com um contato de teste.</p></div><span>Em teste</span></li>
+          <li data-stage="envio"><div><h3>Envio automático</h3><p>O pedido é confirmado na CYD. Para ativar o envio real, falta configurar a conta do WhatsApp Business.</p></div><span>Em configuração</span></li>
           <li data-stage="gps"><div><h3>GPS na placa</h3><p>O receptor NEO-6M está previsto para obter a localização no próprio aparelho.</p></div><span>Em integração</span></li>
         </ul>
       </div>

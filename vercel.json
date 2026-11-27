@@ -1,4 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "public"
+  "outputDirectory": "public",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "setsinac.vercel.app" }],
+      "destination": "https://apoio-senac.vercel.app/:path*",
+      "permanent": true
+    }
+  ]
 }

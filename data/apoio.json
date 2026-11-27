@@ -1,0 +1,35 @@
+{
+  "scenarios": [
+    {
+      "key": "ansiedade",
+      "title": "Ansiedade ou pânico",
+      "text": "Estou com muita ansiedade e preciso de apoio. Você pode falar comigo agora?"
+    },
+    {
+      "key": "roubo",
+      "title": "Celular roubado",
+      "text": "Meu celular foi roubado. Preciso de ajuda. Pode avisar alguém de confiança e me ajudar a chegar a um lugar seguro?"
+    },
+    {
+      "key": "risco",
+      "title": "Estou em risco",
+      "text": "Não me sinto em segurança. Preciso de ajuda agora. Pode avisar alguém de confiança?"
+    },
+    {
+      "key": "conversa",
+      "title": "Preciso conversar",
+      "text": "Preciso conversar com alguém. Você pode me mandar uma mensagem quando puder?"
+    },
+    {
+      "key": "urgente",
+      "title": "Mensagem pronta",
+      "text": "Preciso de ajuda agora. Pode tentar falar comigo ou avisar alguém de confiança?"
+    }
+  ],
+  "messageFormat": {
+    "opening": "Pedido de apoio",
+    "phoneLocation": "Minha localização atual pelo celular",
+    "deviceLocation": "Minha localização atual pelo GPS do aparelho",
+    "missingLocation": "Localização indisponível."
+  }
+}
