@@ -2,6 +2,8 @@
 
 O Apoio é um protótipo escolar para pedir ajuda por uma tela touch. A CYD apresenta uma mensagem para revisão e encaminha um rascunho ao painel, onde a pessoa confirma o envio no WhatsApp.
 
+[Portfólio publicado](https://setsinac.vercel.app/) · [Painel Bluetooth](https://setsinac.vercel.app/painel/)
+
 ## Usar o painel
 
 1. Abra o site do projeto no Chrome com Bluetooth ativo.
